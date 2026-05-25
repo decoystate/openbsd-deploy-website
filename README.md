@@ -29,11 +29,21 @@ example.com/
 ## Setup & Usage
 
 ### 1. Initial Setup (Shared Resources)
-Before your first deploy, move any persistent configuration files, environment variables, or upload directories into the `shared/` folder. This keeps them safe and prevents them from being overwritten.
+Before your first deploy, you **must** properly initialize your `shared/` directory to contain any persistent data (like `config/`, `uploads/`, `.env`, or `logs/`). 
+
+**Important:** The `deploy.ksh` script checks if these items exist in the `shared/` folder. If an item is missing on the server, the symlink step is skipped. If your application relies on a `config/` directory and it's neither in your uploaded source nor symlinked from `shared/`, your site will crash with a "Failed to open stream" error.
 
 ```bash
-doas mkdir -p /var/www/htdocs/example.com/shared
-doas mv /var/www/htdocs/example.com/config /var/www/htdocs/example.com/shared/config
+# Create the base shared directory and required subdirectories
+doas mkdir -p /var/www/htdocs/example.com/shared/config
+doas mkdir -p /var/www/htdocs/example.com/shared/uploads
+doas mkdir -p /var/www/htdocs/example.com/shared/logs
+
+# Move or create your environment variables
+doas touch /var/www/htdocs/example.com/shared/.env
+
+# Populate the config folder with your actual configuration files
+# doas cp /path/to/your/database.php /var/www/htdocs/example.com/shared/config/
 ```
 
 ### 2. Deploying

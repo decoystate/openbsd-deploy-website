@@ -70,6 +70,8 @@ for item in $SHARED_ITEMS; do
         # Create a symlink pointing to the shared, persistent version
         ln -s "../../shared/${item}" "${NEW_RELEASE_DIR}/${item}"
         echo "  -> Linked ${item}"
+    else
+        echo "  -> Notice: '${item}' not found in shared/. Skipping symlink."
     fi
 done
 
@@ -77,11 +79,15 @@ done
 echo "Fixing permissions..."
 # We pass the NEW release directory to your script so visitors don't experience a 
 # window of time where files have the wrong permissions.
+# We also apply it to the shared directory to ensure uploaded/persistent files 
+# have the correct ownership before swapping the symlink.
 SCRIPT_DIR="$(dirname "$0")"
 
 if [ -x "${SCRIPT_DIR}/fix-web-perms.ksh" ]; then
+    "${SCRIPT_DIR}/fix-web-perms.ksh" "${SHARED_DIR}"
     "${SCRIPT_DIR}/fix-web-perms.ksh" "${NEW_RELEASE_DIR}"
 elif command -v fix-web-perms.ksh >/dev/null 2>&1; then
+    fix-web-perms.ksh "${SHARED_DIR}"
     fix-web-perms.ksh "${NEW_RELEASE_DIR}"
 else
     # Fallback if your script isn't in the global PATH

@@ -65,6 +65,7 @@ fix_permissions() {
     if [ -d "${site_dir}/config" ]; then
         # Appending a trailing slash (config/) is crucial here. Since config is often 
         # a symlink pointing to the shared directory, the slash forces 'find' to traverse it.
+        find "${site_dir}/config/" -exec chown "${WEB_USER}:${WEB_GROUP}" {} +
         find "${site_dir}/config/" -type d -exec chmod 750 {} +
         find "${site_dir}/config/" -type f -exec chmod 640 {} +
     fi
