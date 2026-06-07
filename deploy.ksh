@@ -117,5 +117,12 @@ if [ -n "$OLD_RELEASES" ]; then
 fi
 echo ""
 
+# 9. Empty the source directory (keep the directory itself)
+printf "Emptying source directory...\n"
+# Delete all visible files/directories, and all hidden files/directories (ignoring . and ..)
+rm -rf "${SOURCE_DIR}"/* 2>/dev/null || true
+rm -rf "${SOURCE_DIR}"/.[!.]* 2>/dev/null || true
+echo ""
+
 LOG_TIME=$(date '+%Y-%m-%d %H:%M:%S')
 printf "Successfully deployed %s! [%s]\n" "${SITE_NAME}" "${LOG_TIME}"
